@@ -5,8 +5,8 @@ ARG PROFILE=release
 WORKDIR /polkadot
 
 COPY . /polkadot
-
-RUN cargo build --$PROFILE
+# NOTE: Modify number jobs depend on CPUs. This avoid crash when linker pokadot-service
+RUN cargo build -j3 --$PROFILE
 
 # ===== SECOND STAGE ======
 

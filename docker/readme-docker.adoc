@@ -1,16 +1,16 @@
-
-== Polkadot Docker
-
-=== Start a Polkadot docker container
-
-Run the following command
-
-	docker run -d -P --name polkadot chevdor/polkadot:latest
-
 === Building the image
 
 To build your own image from the source, you can run the following command:
 
-	./docker/build.sh
-
+	1. ./docker/build.sh
+	2. docker images (show image polkafoundry/polkadot:latest)
 NOTE: Building the image takes a while. Count at least 30min on a good machine.
+
+=== Run Polkafoundry docker test
+
+	1. cd polkadot/docker
+	2. make up
+	3. check url: https://polkadot.js.org/apps/?rpc=ws%3A%2F%2F127.0.0.1%3A9944#/explorer
+
+=== Stop docker test
+	make down
