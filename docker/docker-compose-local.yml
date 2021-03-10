@@ -10,7 +10,14 @@ services:
     image: polkafoundry/polkadot:latest
     volumes:
       - "polkadot-data-alice:/data"
-    command: polkadot --chain=polkadot-local --alice -d /data --rpc-cors=all --unsafe-rpc-external --unsafe-ws-external --node-key 0000000000000000000000000000000000000000000000000000000000000001
+      - ../spec:/data/spec
+    command: polkadot --chain /data/spec/rococo-custom.json
+              --alice
+              -d /data
+              --rpc-cors=all
+              --unsafe-rpc-external
+              --unsafe-ws-external
+              --node-key 0000000000000000000000000000000000000000000000000000000000000001
     networks:
       testing_net:
         ipv4_address: 172.28.1.1
@@ -25,16 +32,53 @@ services:
     image: polkafoundry/polkadot:latest
     volumes:
       - "polkadot-data-bob:/data"
+      - ../spec:/data/spec
     links:
       - "node_alice:alice"
-    command: polkadot --chain=polkadot-local --bob -d /data --port 30344 --rpc-port 9935 --ws-port 9945 --bootnodes '/ip4/172.28.1.1/tcp/30333/p2p/12D3KooWLDXjNkgc6LF59ma87kjQcxP2RpobcafRL4HhvTGFTNLQ'
+    command: polkadot --chain /data/spec/rococo-custom.json
+              --bob
+              -d /data
+              --port 30344
+              --rpc-port 9935
+              --ws-port 9945
+              --bootnodes '/ip4/172.28.1.1/tcp/30333/p2p/12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp'
     networks:
       testing_net:
         ipv4_address: 172.28.1.2
 
+  node_newpolka:
+    ports:
+      - "40333:40333"
+      - "9844:9844"
+    image: polkafoundry/newpolka:latest
+    volumes:
+      - "polkafoundry-data:/data"
+      - ../spec:/data/spec
+    links:
+      - "node_alice:alice"
+    command:  polkafoundry --chain /data/spec/newpolka-custom.json
+                --rpc-port 9933
+                --rpc-cors all
+                --rpc-methods unsafe
+                --collator
+                --tmp
+                --parachain-id 200
+                --port 40333
+                --ws-port 9844
+                --alice
+                --
+                --execution wasm
+                --chain /data/spec/rococo-custom.json
+                --port 30343
+                --ws-port 9977
+    networks:
+      testing_net:
+        ipv4_address: 172.28.1.3
+
 volumes:
   polkadot-data-alice:
   polkadot-data-bob:
+  polkafoundry-data:
 
 networks:
   testing_net:
